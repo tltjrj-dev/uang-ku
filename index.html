@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Keuangan Glow Gelap</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: #0a0a0a;
+    color: #eee;
+    text-align: center;
+    padding: 25px;
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: relative;
+}
+
+/* 🌟 Bintang jatuh */
+.star {
+    position: fixed;
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    background: white;
+    opacity: 0.8;
+    animation: fall linear infinite;
+    pointer-events: none;
+    z-index: 0;
+}
+
+@keyframes fall {
+    0% { transform: translateY(-10vh) translateX(0); opacity: 0.8; }
+    100% { transform: translateY(110vh) translateX(30px); opacity: 0; }
+}
+
+/* Logo modern */
+.logo {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 15px;
+    animation: floatLogo 4s infinite alternate ease-in-out;
+}
+@keyframes floatLogo {
+    0% { transform: translateY(0px); }
+    100% { transform: translateY(-6px); }
+}
+
+h1 {
+    font-size: 2.7em;
+    color: #00ffe5;
+    text-shadow: 0 0 20px #00ffe5, 0 0 50px #00cfff;
+    margin-bottom: 20px;
+    animation: glowTitle 2s ease-in-out infinite alternate;
+    position: relative;
+    z-index: 2;
+}
+@keyframes glowTitle {
+    0% { text-shadow: 0 0 20px #00ffe5; }
+    100% { text-shadow: 0 0 50px #00cfff; }
+}
+
+.container {
+    background: rgba(255,255,255,0.05);
+    border-radius: 25px;
+    box-shadow: 0 8px 25px rgba(0,255,255,0.2), inset 0 0 15px rgba(0,255,255,0.1);
+    max-width: 550px;
+    margin: 0 auto 30px;
+    padding: 25px;
+    transform: translateY(0);
+    transition: 0.3s;
+    animation: float 5s infinite alternate ease-in-out;
+    position: relative;
+    z-index: 2;
+}
+@keyframes float {
+    0% { transform: translateY(0px); }
+    100% { transform: translateY(-8px); }
+}
+.container:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 35px rgba(0,255,255,0.4), 0 0 30px rgba(0,255,255,0.2) inset;
+}
+
+input, select, button {
+    width: 90%;
+    margin: 10px 0;
+    padding: 12px;
+    border-radius: 12px;
+    border: none;
+    font-size: 1em;
+    transition: 0.3s;
+    box-shadow: inset 0 0 10px rgba(255,255,255,0.1);
+    background: rgba(255,255,255,0.05);
+    color: #eee;
+}
+input:focus, select:focus {
+    outline: none;
+    box-shadow: 0 0 15px #00ffe5;
+}
+
+button {
+    background: linear-gradient(90deg, #00ffe5, #00cfff);
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0 5px 15px rgba(0,255,255,0.3);
+}
+button:hover {
+    box-shadow: 0 0 25px #00cfff, 0 0 50px #00ffe5;
+    transform: translateY(-2px);
+}
+
+.saldo {
+    font-size: 1.6em;
+    margin-top: 15px;
+    color: #00ffe5;
+    text-shadow: 0 0 15px #00cfff;
+    animation: pulse 2s infinite alternate;
+}
+@keyframes pulse {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.05); }
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+}
+li {
+    background: rgba(0,255,255,0.05);
+    margin: 8px 0;
+    padding: 10px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 3px 10px rgba(0,255,255,0.2);
+    transition: 0.3s;
+    animation: floatItem 4s infinite alternate ease-in-out;
+}
+@keyframes floatItem {
+    0% { transform: translateY(0px); }
+    100% { transform: translateY(-5px); }
+}
+li:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 20px #00cfff;
+}
+li.income { color: #00ff88; text-shadow: 0 0 8px #00ff88; }
+li.expense { color: #ff5555; text-shadow: 0 0 8px #ff7777; }
+
+canvas {
+    margin-top: 25px;
+    background: rgba(0,255,255,0.05);
+    border-radius: 15px;
+    padding: 10px;
+    box-shadow: 0 0 20px #00cfff;
+    position: relative;
+    z-index: 2;
+}
+
+footer {
+    margin-top: 30px;
+    font-size: 0.9em;
+    color: #aaa;
+    position: relative;
+    z-index: 2;
+}
+</style>
+</head>
+<body>
+
+<img src="logo.png" class="logo" alt="Logo App">
+
+<img src="https://cdn-icons-png.flaticon.com/512/2910/2910768.png" class="logo" alt="Logo App">
+
+<h1>💫 Keuangan Pribadi Saya</h1>
+
+<div class="container">
+    <input type="text" id="deskripsi" placeholder="Deskripsi (contoh: Gaji, Makan)">
+    <input type="number" id="jumlah" placeholder="Jumlah (Rp)">
+    <select id="tipe">
+        <option value="income">Pemasukan</option>
+        <option value="expense">Pengeluaran</option>
+    </select><input type="date" id="tanggal">
+
+    <button onclick="tambahTransaksi()">Tambah</button>
+
+    <div class="saldo">Saldo: Rp <span id="saldo">0</span></div>
+
+    <canvas id="chartKeuangan" width="400" height="200"></canvas>
+
+    <ul id="daftar"></ul>
+</div>
+
+<footer>🌟 Dibuat dengan cahaya & bintang 🌟</footer>
+
+<script>
+// 🌟 Generate falling stars
+const totalStars = 50;
+for(let i=0;i<totalStars;i++){
+    const star = document.createElement('div');
+    star.className = 'star';
+    star.style.width = (Math.random()*3+1) + 'px';
+    star.style.height = star.style.width;
+    star.style.top = Math.random()*-100 + 'vh';
+    star.style.left = Math.random()*100 + 'vw';
+    star.style.animationDuration = (Math.random()*5+3) + 's';
+    document.body.appendChild(star);
+}
+
+let transaksi = JSON.parse(localStorage.getItem('transaksi')) || [];
+let chart;
+
+function formatRupiah(angka) {
+    return angka.toLocaleString('id-ID');
+}
+
+function render() {
+    const daftar = document.getElementById('daftar');
+    const saldoEl = document.getElementById('saldo');
+    daftar.innerHTML = '';
+
+    let saldo = 0, totalIncome = 0, totalExpense = 0;
+
+    transaksi.forEach((t, i) => {
+        const li = document.createElement('li');
+        li.classList.add(t.tipe);
+        li.innerHTML = `${t.deskripsi} <strong>Rp ${formatRupiah(t.jumlah)}</strong>
+            <button style="background:none;color:#ccc;border:none;cursor:pointer;" onclick="hapus(${i})">❌</button>`;
+        daftar.appendChild(li);
+
+        if (t.tipe === 'income') totalIncome += t.jumlah;
+        else totalExpense += t.jumlah;
+        saldo += (t.tipe === 'income' ? t.jumlah : -t.jumlah);
+    });
+
+    animateSaldo(saldoEl, parseInt(saldoEl.textContent.replace(/\./g, '')) || 0, saldo);
+    localStorage.setItem('transaksi', JSON.stringify(transaksi));
+    updateChart(totalIncome, totalExpense);
+}
+
+function animateSaldo(element, start, end) {
+    const duration = 700;
+    const startTime = performance.now();
+
+    function animate(time) {
+        const progress = Math.min((time - startTime) / duration, 1);
+        const current = Math.floor(start + (end - start) * progress);
+        element.textContent = current.toLocaleString('id-ID');
+        if (progress < 1) requestAnimationFrame(animate);
+    }
+    requestAnimationFrame(animate);
+}
+
+function tambahTransaksi() {
+    const deskripsi = document.getElementById('deskripsi').value.trim();
+    const jumlah = parseInt(document.getElementById('jumlah').value);
+    const tipe = document.getElementById('tipe').value;
+
+    if (!deskripsi || isNaN(jumlah) || jumlah <= 0) {
+        alert('Isi semua data dengan benar!');
+        return;
+    }
+
+    transaksi.push({ deskripsi, jumlah, tipe });
+    document.getElementById('deskripsi').value = '';
+    document.getElementById('jumlah').value = '';
+    render();
+}
+
+function hapus(i) {
+    transaksi.splice(i, 1);
+    render();
+}
+
+function updateChart(income, expense) {
+    const ctx = document.getElementById('chartKeuangan').getContext('2d');
+    if (chart) chart.destroy();
+    chart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Pemasukan', 'Pengeluaran'],
+            datasets: [{
+                data: [income, expense],
+                backgroundColor: ['#00ff88', '#ff5555'],
+                borderColor: ['#00aaff', '#ff7777'],
+                borderWidth: 2,
+                hoverOffset: 12,
+            }]
+        },
+        options: {
+            plugins: {
+                legend: { labels: { color: '#eee', font: { size: 14 } } }
+            }
+        }
+    });
+}
+
+render();
+</script>
+</body>
+</html>
